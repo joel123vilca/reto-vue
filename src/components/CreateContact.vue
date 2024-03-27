@@ -146,7 +146,7 @@
               >
                 <template #bodyCell="{ column, text }">
                   <template v-if="column.dataIndex === 'action'">
-                    <a>Crear contacto aquí</a>
+                    <a @click="sendForm">Crear contacto aquí</a>
                   </template>
                 </template>
               </a-table>
@@ -165,6 +165,7 @@
 import { defineProps, defineEmits, ref, reactive } from "vue";
 import type { UnwrapRef } from "vue";
 import type { Rule } from "ant-design-vue/es/form";
+import ContactService from "../services/ContactService";
 
 interface FormState {
   name: string;
@@ -228,6 +229,10 @@ const data = [
   { key: "2", company: "Banco Global", campain: "Campaña atc" },
   { key: "3", company: "Banco Global", campain: "Campaña reclamos" },
 ];
+
+const sendForm = async () => {
+  await ContactService.createContact(formState);
+};
 </script>
 
 <style scoped>
