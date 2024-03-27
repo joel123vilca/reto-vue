@@ -5,7 +5,7 @@
       <Header />
       <a-layout-content class="content">
         <div class="content-inner">
-          <router-view />
+          <Dashboard />
         </div>
       </a-layout-content>
     </a-layout>
@@ -15,6 +15,7 @@
 <script lang="ts" setup>
 import Sidebar from "./components/Sidebar.vue";
 import Header from "./components/Header.vue";
+import Dashboard from "./views/Dashboard.vue";
 </script>
 
 <style scoped>
@@ -30,6 +31,6 @@ import Header from "./components/Header.vue";
 .content-inner {
   background: #fff;
   padding: 24px;
-  height: calc(100% - 48px);
+  height: 100%;
 }
 </style>
