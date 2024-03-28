@@ -7,6 +7,16 @@
       :footer="null"
       @cancel="handleClose"
     >
+      <a-steps v-model:current="currentStep" :items="steps" class="steps">
+        <template #progressDot="{ index, status, prefixCls }">
+          <a-popover>
+            <template #content>
+              <span>{{ index }}{{ status }}</span>
+            </template>
+            <span :class="`${prefixCls}-icon-dot`" />
+          </a-popover>
+        </template>
+      </a-steps>
       <ContactForm
         v-if="currentStep === 0"
         :formState="formState"
@@ -32,6 +42,8 @@ import CampaignSelection from "./CreateContactComponents/SelectCompain.vue";
 
 const props = defineProps({ openCreate: Boolean });
 const emits = defineEmits();
+
+const steps = [{ title: "Completar datos" }, { title: "Asignar campaña" }];
 const openNotificationSuccess = (type: string) => {
   notification[type]({
     message: "Contacto Creado con éxito",
@@ -74,3 +86,9 @@ const sendForm = async () => {
   handleClose();
 };
 </script>
+<style scoped>
+.steps {
+  margin-top: 25px;
+  margin-bottom: 20px;
+}
+</style>

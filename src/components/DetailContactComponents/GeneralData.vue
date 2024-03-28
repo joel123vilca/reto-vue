@@ -1,50 +1,107 @@
 <template>
   <a-tabs v-model:activeKey="activeKey">
     <a-tab-pane key="1" tab="Datos Personales">
+      <a-typography-text type="secondary"
+        >Puedes agregar o editar información acorde a los campos
+        configurados.</a-typography-text
+      >
+      <br />
       <div class="form-row">
         <div class="form-item">
-          <a-typography-text strong>Código de contacto</a-typography-text>
-          <a-input />
+          <a-typography-text strong>Código de contacto </a-typography-text>
+          <a-input
+            readonly
+            :bordered="false"
+            :value="props.contactData?.code"
+            :style="{ borderBottom: '1px solid #d9d9d9' }"
+          />
         </div>
         <div class="form-item">
           <a-typography-text strong>Nombre</a-typography-text>
-          <a-input />
+          <a-input
+            readonly
+            :bordered="false"
+            :style="{ borderBottom: '1px solid #d9d9d9' }"
+          />
         </div>
         <div class="form-item">
           <a-typography-text strong>Apellido Paterno</a-typography-text>
-          <a-input />
+          <a-input
+            readonly
+            :bordered="false"
+            :style="{ borderBottom: '1px solid #d9d9d9' }"
+          />
         </div>
         <div class="form-item">
           <a-typography-text strong>Apellido Materno</a-typography-text>
-          <a-input />
+          <a-input
+            readonly
+            :bordered="false"
+            :style="{ borderBottom: '1px solid #d9d9d9' }"
+          />
         </div>
         <div class="form-item">
           <a-typography-text strong>N de documento</a-typography-text>
-          <a-input />
+          <a-input
+            readonly
+            :bordered="false"
+            :value="props.contactData?.document_number"
+            :style="{ borderBottom: '1px solid #d9d9d9' }"
+          />
         </div>
         <div class="form-item">
           <a-typography-text strong>Fecha de nacimiento</a-typography-text>
-          <a-input />
+          <a-input
+            readonly
+            :bordered="false"
+            value="22 / 08 / 2000"
+            :style="{ borderBottom: '1px solid #d9d9d9' }"
+          />
         </div>
         <div class="form-item">
           <a-typography-text strong>Edad</a-typography-text>
-          <a-input />
+          <a-input
+            readonly
+            :bordered="false"
+            value="28"
+            :style="{ borderBottom: '1px solid #d9d9d9' }"
+          />
         </div>
         <div class="form-item">
           <a-typography-text strong>Sexo</a-typography-text>
-          <a-input />
+          <a-input
+            readonly
+            :bordered="false"
+            value="Masculino"
+            :style="{ borderBottom: '1px solid #d9d9d9' }"
+          />
         </div>
         <div class="form-item">
           <a-typography-text strong>Estado civil</a-typography-text>
-          <a-input />
+          <a-input
+            readonly
+            :bordered="false"
+            value="Soltero"
+            :style="{ borderBottom: '1px solid #d9d9d9' }"
+          />
         </div>
         <div class="form-item">
           <a-typography-text strong>Pais</a-typography-text>
-          <a-input />
+          <a-input
+            readonly
+            :bordered="false"
+            value="Perú"
+            :style="{ borderBottom: '1px solid #d9d9d9' }"
+          />
         </div>
         <div class="form-item">
           <a-typography-text strong>Ciudad</a-typography-text>
-          <a-input />
+          <a-input
+            readonly
+            :bordered="false"
+            value="Lima"
+            :style="{ borderBottom: '1px solid #d9d9d9' }"
+          />
         </div>
       </div>
     </a-tab-pane>
@@ -60,7 +117,8 @@
   </a-tabs>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
+import { defineProps, ref } from "vue";
+const props = defineProps({ contactData: Object });
 const activeKey = ref("1");
 const columns = [
   { title: "Código del país", dataIndex: "company" },
@@ -72,18 +130,14 @@ const columns = [
   { title: "Observación", dataIndex: "action" },
 ];
 
-const data = [
-  { key: "1", company: "Banco Global", campain: "Campaña ventas" },
-  { key: "2", company: "Banco Global", campain: "Campaña atc" },
-  { key: "3", company: "Banco Global", campain: "Campaña reclamos" },
-];
+const data = [];
 </script>
 <style scoped>
 .form-row {
-  background: rgba(0, 0, 0, 0.06);
+  background: rgba(0, 0, 0, 0.05);
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(100%, 1fr));
-  padding: 4px;
+  padding: 8px;
 }
 
 .form-item {

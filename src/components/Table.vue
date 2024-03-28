@@ -67,6 +67,8 @@
       :data-source="contactsStore?.contacts?.results"
       :scroll="{ x: 1300, y: 1000 }"
       bordered
+      :customRow="customRow"
+      :rowClassName="getRowClassName"
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'full_name'">
@@ -102,7 +104,11 @@
       </template>
     </a-table>
     <CreateContact :openCreate="openCreate" @closeCreate="closeCreate()" />
-    <DetailContact />
+    <DetailContact
+      :openDetail="openDetail"
+      :contact="contact"
+      @closeDetail="closeDetail"
+    />
   </div>
 </template>
 <script lang="ts" setup>
@@ -120,10 +126,21 @@ import DetailContact from "./DetailContact.vue";
 import { useContactStore } from "../store/ContactStore";
 
 const openCreate = ref(false);
+const openDetail = ref(false);
 const activeState = ref(true);
 const searchValue = ref("");
-
+const contact = ref(null);
 const contactsStore = useContactStore();
+
+const customRow = (record) => {
+  return {
+    onClick: (event) => {
+      console.log("click row", record);
+      contact.value = record;
+      openDetail.value = true;
+    },
+  };
+};
 
 const columns: TableColumnsType = [
   {
@@ -227,25 +244,20 @@ const columns: TableColumnsType = [
     width: 100,
   },
 ];
-const selectedRows = ref([]);
 
-const isSelectedRow = (record: any) => {
-  return selectedRows.value.includes(record.id);
-};
-
-const toggleRowSelection = (record: any) => {
-  if (isSelectedRow(record)) {
-    selectedRows.value = selectedRows.value.filter((key) => key !== record.id);
-  } else {
-    selectedRows.value = [...selectedRows.value, record.id];
-  }
-};
 const openModalCreate = () => {
   openCreate.value = true;
 };
 
 const closeCreate = () => {
   openCreate.value = false;
+};
+
+const closeDetail = () => {
+  openDetail.value = false;
+};
+const getRowClassName = () => {
+  return "evenCls";
 };
 </script>
 <style scoped>
@@ -275,5 +287,11 @@ const closeCreate = () => {
   display: flex;
   align-items: center;
   gap: 4px;
+}
+.ant-table-body > table > .ant-table-body > tr.evenCls > td {
+  background: yellow;
+}
+.ant-table-body > table > .ant-table-body > tr.evenCls:hover > td {
+  background: yellow;
 }
 </style>
