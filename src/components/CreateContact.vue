@@ -5,6 +5,7 @@
       title="Crea un nuevo contacto"
       :closable="true"
       :footer="null"
+      @cancel="handleClose"
     >
       <div class="modal-create">
         <a-steps v-model:current="currentStep" :items="steps">
@@ -17,7 +18,7 @@
             </a-popover>
           </template>
         </a-steps>
-        <template v-for="(item, index) in steps" :key="index">
+        <template v-for="(item, index) in steps" :key="item.title">
           <div v-if="currentStep === index">
             <form v-if="index === 0" :key="'form-' + index">
               <div class="form-title">
@@ -31,53 +32,62 @@
                 :wrapper-col="wrapperCol"
               >
                 <a-form-item
-                  ref="name"
+                  ref="first_name"
                   label="Nombres"
-                  name="name"
+                  name="first_name"
                   labelAlign="top"
                 >
                   <a-input
-                    v-model:value="formState.name"
+                    v-model:value="formState.first_name"
                     placeholder="Nombres"
                   />
                 </a-form-item>
                 <div class="content-item">
                   <a-form-item
-                    ref="paternalSurname"
+                    ref="paternal_surname"
                     label="Apellido paterno"
-                    name="paternalSurname"
+                    name="paternal_surname"
                     labelAlign="top"
                   >
-                    <a-input v-model:value="formState.paternalSurname" />
+                    <a-input v-model:value="formState.paternal_surname" />
                   </a-form-item>
                   <a-form-item
-                    ref="maternalSurname"
+                    ref="maternal_surname"
                     label="Apellido materno"
-                    name="maternalSurname"
+                    name="maternal_surname"
                     labelAlign="top"
                   >
-                    <a-input v-model:value="formState.maternalSurname" />
+                    <a-input v-model:value="formState.maternal_surname" />
                   </a-form-item>
                 </div>
                 <div class="content-item">
                   <a-form-item
-                    ref="typeDocument"
+                    ref="type_document"
                     label="Tipo de documento"
-                    name="typeDocument"
+                    name="type_document"
                     labelAlign="top"
                   >
-                    <a-select v-model:value="formState.typeDocument">
+                    <a-select v-model:value="formState.type_document">
                       <a-select-option value="DNI">DNI</a-select-option>
                       <a-select-option value="RUC">RUC</a-select-option>
                     </a-select>
                   </a-form-item>
                   <a-form-item
-                    ref="documentNumber"
-                    label="Nº de documento"
-                    name="documentNumber"
+                    ref="document_number"
+                    name="document_number"
                     labelAlign="top"
                   >
-                    <a-input v-model:value="formState.documentNumber" />
+                    <template #label>
+                      <span>
+                        Nº de documento
+                        <a-tooltip
+                          title="El n° de DNI es opcional. Si lo agrega, ese será su código de contacto. En caso de no agregarlo, el código de contacto será aleatorio. "
+                        >
+                          <InfoCircleOutlined />
+                        </a-tooltip>
+                      </span>
+                    </template>
+                    <a-input v-model:value="formState.document_number" />
                   </a-form-item>
                 </div>
                 <div class="content-item">
@@ -105,9 +115,11 @@
                   labelAlign="top"
                 >
                   <a-input-group compact>
-                    <a-select v-model:value="formState.codePhone">
-                      <a-select-option value="Option1">Option1</a-select-option>
-                      <a-select-option value="Option2">Option2</a-select-option>
+                    <a-select v-model:value="formState.code_phone" disabled>
+                      <a-select-option value="51">
+                        <FlagPeru />
+                        +51
+                      </a-select-option>
                     </a-select>
                     <a-input
                       v-model:value="formState.phone"
@@ -115,7 +127,8 @@
                     />
                   </a-input-group>
                 </a-form-item>
-                <div>
+                <div class="form-information">
+                  <InfoCircleOutlined class="info-icon" />
                   <span
                     >Podrás agregar más de cada uno de estos datos después de
                     crear el contacto</span
@@ -125,7 +138,11 @@
                   <a-button style="margin-left: 10px" @click="handleClose"
                     >Cancelar</a-button
                   >
-                  <a-button style="margin-left: 10px" @click="nextStep"
+                  <a-button
+                    style="margin-left: 10px"
+                    @click="nextStep"
+                    :disabled="disabled"
+                    type="primary"
                     >Continuar</a-button
                   >
                 </div>
@@ -144,14 +161,16 @@
                 :data-source="data"
                 :pagination="false"
               >
-                <template #bodyCell="{ column, text }">
+                <template #bodyCell="{ column }">
                   <template v-if="column.dataIndex === 'action'">
                     <a @click="sendForm">Crear contacto aquí</a>
                   </template>
                 </template>
               </a-table>
               <div class="actions">
-                <a-button style="margin-left: 10px">Volver</a-button>
+                <a-button style="margin-left: 10px" @click="backStep"
+                  >Volver</a-button
+                >
               </div>
             </form>
           </div>
@@ -162,43 +181,57 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits, ref, reactive } from "vue";
+import { defineProps, defineEmits, ref, reactive, computed } from "vue";
 import type { UnwrapRef } from "vue";
 import type { Rule } from "ant-design-vue/es/form";
+import { InfoCircleOutlined } from "@ant-design/icons-vue";
+import { notification } from "ant-design-vue";
+import FlagPeru from "../assets/icons/FlagPeru.vue";
 import ContactService from "../services/ContactService";
 
 interface FormState {
-  name: string;
-  paternalSurname: string;
-  maternalSurname: string;
-  typeDocument: string;
-  documentNumber: string;
+  first_name: string;
+  paternal_surname: string;
+  maternal_surname: string;
+  type_document: string;
+  document_number: string;
   address: string;
   email: string;
-  codePhone: string;
+  code_phone: string;
   phone: string;
+  portfolio: string;
+  country: string;
 }
 
 const labelCol = { span: 24 };
 const wrapperCol = { span: 24 };
 
 const formState: UnwrapRef<FormState> = reactive({
-  name: "",
-  paternalSurname: "",
-  maternalSurname: "",
-  typeDocument: "DNI",
-  documentNumber: "",
+  first_name: "",
+  paternal_surname: "",
+  maternal_surname: "",
+  type_document: "DNI",
+  document_number: "",
   address: "",
   email: "",
-  codePhone: "",
+  code_phone: "51",
   phone: "",
+  portfolio: "1",
+  country: "1",
 });
 
 const rules: Record<string, Rule[]> = {
-  name: [
+  first_name: [
     {
       required: true,
       message: "El nombre es requerido.",
+      trigger: "change",
+    },
+  ],
+  paternal_surname: [
+    {
+      required: true,
+      message: "El apellido paterno es requerido.",
       trigger: "change",
     },
   ],
@@ -218,6 +251,13 @@ const nextStep = () => {
   currentStep.value = 1;
 };
 
+const backStep = () => {
+  currentStep.value = 0;
+};
+
+const disabled = computed(() => {
+  return !(formState.first_name && formState.paternal_surname);
+});
 const columns = [
   { title: "Empresa", dataIndex: "company" },
   { title: "Campaña", className: "name", dataIndex: "campain" },
@@ -230,8 +270,26 @@ const data = [
   { key: "3", company: "Banco Global", campain: "Campaña reclamos" },
 ];
 
+const openNotificationSuccess = (type: string) => {
+  notification[type]({
+    message: "Contacto Creado con éxito",
+  });
+};
+
+const openNotificationError = (type: string) => {
+  notification[type]({
+    message: "Error al crear contacto",
+  });
+};
+
 const sendForm = async () => {
-  await ContactService.createContact(formState);
+  try {
+    await ContactService.createContact(formState);
+    openNotificationSuccess("success");
+  } catch (e) {
+    openNotificationError("error");
+  }
+  handleClose();
 };
 </script>
 
@@ -249,6 +307,14 @@ const sendForm = async () => {
 }
 .form-title {
   text-align: center;
+}
+.form-information {
+  color: rgba(89, 89, 89, 1);
+  display: flex;
+  gap: 8px;
+}
+.info-icon {
+  margin-top: 6px;
 }
 .actions {
   display: flex;

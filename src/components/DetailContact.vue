@@ -2,7 +2,7 @@
   <a-drawer
     :width="500"
     title="Detalles del contacto"
-    :open="true"
+    :open="false"
     :footer-style="{ textAlign: 'right' }"
   >
     <div>

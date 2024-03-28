@@ -69,42 +69,36 @@
       bordered
     >
       <template #bodyCell="{ column, record }">
-        <div
-          class="table-row"
-          @click="toggleRowSelection(record)"
-          :class="{ 'selected-row': isSelectedRow(record) }"
-        >
-          <template v-if="column.key === 'full_name'">
-            <a>{{ record.full_name }}</a>
-          </template>
-          <template v-if="column.key === 'channels'">
-            <div class="channels">
-              <div v-for="(channel, index) in record.channels" :key="index">
-                <img :src="channel.icon" alt="channels" class="channel" />
-              </div>
+        <template v-if="column.key === 'full_name'">
+          <a>{{ record.full_name }}</a>
+        </template>
+        <template v-if="column.key === 'channels'">
+          <div class="channels">
+            <div v-for="(channel, index) in record.channels" :key="index">
+              <img :src="channel.icon" alt="channels" class="channel" />
             </div>
-          </template>
-          <template v-if="column.key === 'phone'">
-            <a v-if="record.phones.length"
-              >{{ record.phones.length }} teléfonos</a
-            >
-          </template>
-          <template v-if="column.key === 'operation'">
-            <div class="actions">
-              <a-switch v-model:checked="activeState" size="small" />
-              <a-tooltip placement="top">
-                <template #title>
-                  <span>Eliminar</span>
+          </div>
+        </template>
+        <template v-if="column.key === 'phone'">
+          <a v-if="record.phones.length"
+            >{{ record.phones.length }} teléfonos</a
+          >
+        </template>
+        <template v-if="column.key === 'operation'">
+          <div class="actions">
+            <a-switch v-model:checked="activeState" size="small" />
+            <a-tooltip placement="top">
+              <template #title>
+                <span>Eliminar</span>
+              </template>
+              <a-button type="link" block>
+                <template #icon>
+                  <DeleteOutlined />
                 </template>
-                <a-button type="link" block>
-                  <template #icon>
-                    <DeleteOutlined />
-                  </template>
-                </a-button>
-              </a-tooltip>
-            </div>
-          </template>
-        </div>
+              </a-button>
+            </a-tooltip>
+          </div>
+        </template>
       </template>
     </a-table>
     <CreateContact :openCreate="openCreate" @closeCreate="closeCreate()" />

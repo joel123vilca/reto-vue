@@ -15,7 +15,6 @@ export default class ContactService {
         }
       );
       useContactStore().setContacts(response.data);
-      console.log("console", response.data);
       return response.data;
     } catch (error) {
       console.error("Error fetching contacts:", error);
@@ -37,7 +36,7 @@ export default class ContactService {
       );
       return response.data;
     } catch (error) {
-      return null;
+      throw new Error("Error al crear el contacto: ");
     }
   }
 }
